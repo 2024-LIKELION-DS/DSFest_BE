@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Entity(name="Notice")
 @Builder
 public class Notice extends BaseEntity{
     @Id
