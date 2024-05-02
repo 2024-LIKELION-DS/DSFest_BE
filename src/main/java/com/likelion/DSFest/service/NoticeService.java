@@ -15,9 +15,9 @@ public class NoticeService {
     private NoticeRepository noticeRepository;
 
     public String create(NoticeDTO noticeDTO) {
-        if (noticeDTO.getImages() != null) { //이미지가 있다면 이미지 등록 필요 s3에
-            
-        }
+//        if (noticeDTO.getImages() != null) { //이미지가 있다면 이미지 등록 필요 s3에
+//
+//        }
         Notice notice = NoticeDTO.toEntity(noticeDTO); //엔티티로 변경
 
         validate(notice); // 정보 확인

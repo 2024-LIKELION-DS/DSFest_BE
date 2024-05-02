@@ -19,7 +19,7 @@ public class NoticeDTO {
     private String content;
     private Timestamp createdAt;
     private Category category;
-    private List<String> images; //이미지는 따로 붙일게염
+    //private List<String> images; //이미지는 따로 붙일게염
 
     public NoticeDTO(final Notice notice) {
         Notice.builder()
