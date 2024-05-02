@@ -80,7 +80,7 @@ public class NoticeService {
 
     public ResponseDTO<NoticeDTO.responseNoticeDTO> readOne(Integer id) {
         NoticeDTO.responseNoticeDTO noticeDTO = noticeRepository.findById(id)
-                .map(notice -> NoticeDTO.toDto(notice)) // Notice를 NoticeDTO로 변환하는 메소드를 호출
+                .map(NoticeDTO::toDto) // Notice를 NoticeDTO로 변환하는 메소드를 호출
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다."));
 
         noticeDTO.setImages(imageRepository.findByNotice_NoticeId(id)); // 이미지 세팅
