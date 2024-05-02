@@ -22,14 +22,6 @@ public class NoticeDTO {
     private Category category;
     //private List<String> images; //이미지는 따로 붙일게염
 
-    public NoticeDTO(final Notice notice) {
-        Notice.builder()
-                .title(notice.getTitle())
-                .content(notice.getContent())
-                .category(notice.getCategory())
-                .build();
-    }
-
     public static Notice toEntity(final NoticeDTO noticeDTO) {
         return Notice.builder()
                 .title(noticeDTO.getTitle())
