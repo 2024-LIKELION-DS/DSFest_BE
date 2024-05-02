@@ -1,12 +1,17 @@
 package com.likelion.DSFest.service;
 
 import com.likelion.DSFest.dto.NoticeDTO;
+import com.likelion.DSFest.entity.Image;
 import com.likelion.DSFest.entity.Notice;
 import com.likelion.DSFest.repository.NoticeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -14,19 +19,21 @@ public class NoticeService {
     @Autowired
     private NoticeRepository noticeRepository;
 
-    public String create(NoticeDTO noticeDTO) {
-//        if (noticeDTO.getImages() != null) { //이미지가 있다면 이미지 등록 필요 s3에
-//
-//        }
+    public String create(NoticeDTO noticeDTO, List<MultipartFile> multipartFiles) {
         Notice notice = NoticeDTO.toEntity(noticeDTO); //엔티티로 변경
 
         validate(notice); // 정보 확인
 
-        noticeRepository.save(notice); // 저장
+        noticeRepository.save(notice); // 글 저장
+
+        //이미지 저장
+        multipartFiles.stream().map(file ->
+                Image.builder()
+                        .image(file.getName())
+                        .notice(notice).build()).collect(Collectors.toList()); //객체 하나하나 저장
 
         return "등록 성공";
     }
-    
 
 
     // 맞게 들어온 정보인지 확인

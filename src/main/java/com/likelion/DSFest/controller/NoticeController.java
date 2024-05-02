@@ -25,8 +25,9 @@ public class NoticeController {
     public ResponseEntity<Object> create(@RequestPart NoticeDTO noticeDTO,
                                          @RequestPart (required=false) List<MultipartFile> multipartFiles) {
         try {
-            String message = noticeService.create(noticeDTO);
-            System.out.println(multipartFiles);
+            String message = noticeService.create(noticeDTO, multipartFiles); //글과 이미지 등록
+
+
 
             ResponseDTO<Object> response = ResponseDTO.builder().message(message).build();
             return ResponseEntity.ok().body(response);
