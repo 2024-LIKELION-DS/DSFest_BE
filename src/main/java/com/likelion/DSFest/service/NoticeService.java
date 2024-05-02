@@ -2,14 +2,22 @@ package com.likelion.DSFest.service;
 
 import com.likelion.DSFest.aws.s3.AmazonS3Manager;
 import com.likelion.DSFest.dto.NoticeDTO;
+import com.likelion.DSFest.dto.ResponseDTO;
 import com.likelion.DSFest.entity.Image;
 import com.likelion.DSFest.entity.Notice;
 import com.likelion.DSFest.repository.ImageRepository;
 import com.likelion.DSFest.repository.NoticeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -50,6 +58,31 @@ public class NoticeService {
         });
 
         return "등록 성공";
+    }
+
+    public ResponseDTO<NoticeDTO> readAll() {
+        List<Notice> notices = noticeRepository.findAll();
+
+        List<NoticeDTO> noticeDTOS = new ArrayList<>();
+
+        for(Notice n : notices) {
+            noticeDTOS.add(NoticeDTO.toDto(n));
+        }
+
+        ResponseDTO<NoticeDTO> responseDTO = new ResponseDTO<>("모든 공지사항을 조회했습니다.", noticeDTOS);
+        return responseDTO;
+    }
+
+    public ResponseDTO<NoticeDTO> readOne(Integer id) {
+        NoticeDTO noticeDTO = noticeRepository.findById(id)
+                .map(notice -> NoticeDTO.toDto(notice)) // Notice를 NoticeDTO로 변환하는 메소드를 호출
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다."));
+
+        List<NoticeDTO> noticeDTOS = new ArrayList<>();
+        noticeDTOS.add(noticeDTO);
+
+        ResponseDTO<NoticeDTO> responseDTO = new ResponseDTO<>("공지사항을 조회했습니다.", noticeDTOS);
+        return responseDTO;
     }
 
 

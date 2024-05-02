@@ -37,4 +37,17 @@ public class NoticeController {
             return ResponseEntity.badRequest().body(response);
         }
     }
+
+    @GetMapping("read/all")
+    public ResponseEntity<ResponseDTO> readAll() {
+        ResponseDTO response = noticeService.readAll();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("read/{id}")
+    public ResponseEntity<ResponseDTO> readOne(@PathVariable Integer id) {
+        ResponseDTO response = noticeService.readOne(id);
+        return ResponseEntity.ok().body(response);
+    }
+
 }
