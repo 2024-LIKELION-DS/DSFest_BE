@@ -3,6 +3,7 @@ package com.likelion.DSFest.service;
 import com.likelion.DSFest.dto.NoticeDTO;
 import com.likelion.DSFest.entity.Image;
 import com.likelion.DSFest.entity.Notice;
+import com.likelion.DSFest.repository.ImageRepository;
 import com.likelion.DSFest.repository.NoticeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class NoticeService {
     @Autowired
     private NoticeRepository noticeRepository;
 
+    @Autowired
+    private ImageRepository imageRepository;
+
     public String create(NoticeDTO noticeDTO, List<MultipartFile> multipartFiles) {
         Notice notice = NoticeDTO.toEntity(noticeDTO); //엔티티로 변경
 
@@ -27,10 +31,18 @@ public class NoticeService {
         noticeRepository.save(notice); // 글 저장
 
         //이미지 저장
-        multipartFiles.stream().map(file ->
-                Image.builder()
-                        .image(file.getName())
-                        .notice(notice).build()).collect(Collectors.toList()); //객체 하나하나 저장
+        multipartFiles.forEach(multipartFile -> {
+            try {
+                Image image = Image.builder()
+                        .image(multipartFile.getOriginalFilename()) // You might want to store the actual image content instead of name
+                        .notice(notice)
+                        .build();
+                imageRepository.save(image); // Save the image to the database
+            } catch (Exception e) {
+                log.error("Error occurred while saving image: {}", e.getMessage());
+                throw new RuntimeException("Failed to save image");
+            }
+        });
 
         return "등록 성공";
     }
