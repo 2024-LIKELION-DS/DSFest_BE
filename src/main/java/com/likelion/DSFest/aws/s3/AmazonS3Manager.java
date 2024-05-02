@@ -41,6 +41,10 @@ public class AmazonS3Manager{
         return amazonS3Client.getUrl("dsfest2024", storeFilename).toString();
     }
 
+    public void deleteFile(String filename) {
+        amazonS3Client.deleteObject(bucket, filename);
+    }
+
 
 
 
