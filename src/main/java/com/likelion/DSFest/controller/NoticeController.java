@@ -40,14 +40,27 @@ public class NoticeController {
 
     @GetMapping("read/all")
     public ResponseEntity<ResponseDTO> readAll() {
-        ResponseDTO response = noticeService.readAll();
-        return ResponseEntity.ok().body(response);
+        try {
+            ResponseDTO response = noticeService.readAll();
+            return ResponseEntity.ok().body(response);
+            
+        } catch (Exception e) {
+            ResponseDTO<Object> response = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity.badRequest().body(response); //오류 메시지 확인할 수 있도록
+        }
+
     }
 
     @GetMapping("read/{id}")
     public ResponseEntity<ResponseDTO> readOne(@PathVariable Integer id) {
-        ResponseDTO response = noticeService.readOne(id);
-        return ResponseEntity.ok().body(response);
+        try {
+            ResponseDTO response = noticeService.readOne(id);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            ResponseDTO<Object> response = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity.badRequest().body(response); //오류 메시지 확인할 수 있도록
+        }
+
     }
 
 }

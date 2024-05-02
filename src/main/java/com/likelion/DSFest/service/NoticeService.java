@@ -66,7 +66,12 @@ public class NoticeService {
         List<NoticeDTO> noticeDTOS = new ArrayList<>();
 
         for(Notice n : notices) {
-            noticeDTOS.add(NoticeDTO.toDto(n));
+            NoticeDTO noticeDTO = NoticeDTO.toDto(n);
+
+            //이미지 넣기
+            noticeDTO.setImages(imageRepository.findByNotice_NoticeId(n.getNoticeId()));
+
+            noticeDTOS.add(noticeDTO);
         }
 
         ResponseDTO<NoticeDTO> responseDTO = new ResponseDTO<>("모든 공지사항을 조회했습니다.", noticeDTOS);
@@ -78,6 +83,8 @@ public class NoticeService {
                 .map(notice -> NoticeDTO.toDto(notice)) // Notice를 NoticeDTO로 변환하는 메소드를 호출
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다."));
 
+        noticeDTO.setImages(imageRepository.findByNotice_NoticeId(id)); // 이미지 세팅
+        
         List<NoticeDTO> noticeDTOS = new ArrayList<>();
         noticeDTOS.add(noticeDTO);
 
