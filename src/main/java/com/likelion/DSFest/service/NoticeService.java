@@ -13,12 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -72,11 +71,7 @@ public class NoticeService {
             //이미지 넣기
             List<Image> images = imageRepository.findByNotice_NoticeId(n.getNoticeId());
 
-            List<ImageDTO.responseImageDTO> imageDTOS = new ArrayList<>();
-            for(Image image : images) {
-                ImageDTO.responseImageDTO imageDTO = ImageDTO.toDto(image);
-                imageDTOS.add(imageDTO);
-            }
+            List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
             noticeDTO.setImages(imageDTOS);
 
             noticeDTOS.add(noticeDTO);
@@ -93,11 +88,7 @@ public class NoticeService {
 
         List<Image> images = imageRepository.findByNotice_NoticeId(id);
 
-        List<ImageDTO.responseImageDTO> imageDTOS = new ArrayList<>();
-        for(Image image : images) {
-            ImageDTO.responseImageDTO imageDTO = ImageDTO.toDto(image);
-            imageDTOS.add(imageDTO);
-        }
+        List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
         noticeDTO.setImages(imageDTOS);
 
         List<NoticeDTO.responseNoticeDTO> noticeDTOS = new ArrayList<>();
@@ -105,6 +96,60 @@ public class NoticeService {
 
         ResponseDTO<NoticeDTO.responseNoticeDTO> responseDTO = new ResponseDTO<>("공지사항을 조회했습니다.", noticeDTOS);
         return responseDTO;
+    }
+
+    @Transactional
+    public ResponseDTO<NoticeDTO.responseNoticeDTO> update(NoticeDTO.requestNoticeDTO noticeDTO, List<MultipartFile> multipartFiles,Integer id) {
+        Notice originalNotice = noticeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다"));
+
+        if (noticeDTO.getTitle() == null || noticeDTO.getContent() == null || noticeDTO.getCategory() == null) { // 셋 중 하나 널이면
+            log.warn("빈칸이 존재할 수 없습니다.");
+            throw new RuntimeException("수정 시 빈칸이 존재할 수 없습니다.");
+        }
+
+        //수정
+        originalNotice.setTitle(noticeDTO.getTitle());
+        originalNotice.setContent(noticeDTO.getContent());
+        originalNotice.setCategory(noticeDTO.getCategory());
+        noticeRepository.save(originalNotice);
+
+        //responseDTO 구현
+        List<NoticeDTO.responseNoticeDTO> noticeDTOS = new ArrayList<>();
+        NoticeDTO.responseNoticeDTO responseDTO = NoticeDTO.toDto(originalNotice);
+
+        //이미지가 없는 경우 빼고는 다 다시 올려서 연결
+        if (multipartFiles != null) {
+            List<Image> images = imageUpdate(multipartFiles, id); //이미지 업데이트
+            List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
+            responseDTO.setImages(imageDTOS); //dto에 이미지들 추가
+            noticeDTOS.add(responseDTO);
+        }
+
+        return ResponseDTO.<NoticeDTO.responseNoticeDTO>builder()
+                .message("수정 완료")
+                .data(noticeDTOS)
+                .build();
+
+    }
+
+    @Transactional
+    public List<Image> imageUpdate(List<MultipartFile> multipartFiles, Integer id) {
+        imageRepository.findByNotice_NoticeId(id).forEach(image -> { //s3에서 파일 삭제
+            s3Manager.deleteFile(image.getImageUrl());
+        });
+
+        imageRepository.deleteByNotice_NoticeId(id); //기존 이미지 데이터 베이스에서 모두 삭제
+
+        return multipartFiles.stream().map(multipartFile -> {
+                    String imageUrl = s3Manager.uploadFile(multipartFile); //이미지 새로 저장
+                    Image image = Image.builder()
+                            .imageUrl(imageUrl)
+                            .notice(noticeRepository.findById(id).get())
+                            .build();
+                    imageRepository.save(image);
+            return image;
+        }).collect(Collectors.toList());
     }
 
 

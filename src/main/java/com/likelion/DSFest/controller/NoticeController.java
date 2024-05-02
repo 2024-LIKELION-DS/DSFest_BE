@@ -61,4 +61,18 @@ public class NoticeController {
 
     }
 
+    @PutMapping(path="update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseDTO> update(@PathVariable Integer id, @RequestPart NoticeDTO.requestNoticeDTO noticeDTO,
+                                              @RequestPart (required=false) List<MultipartFile> multipartFiles) {
+        try {
+            //제목 내용 변경, 내부에 이미지 변경
+            ResponseDTO response= noticeService.update(noticeDTO, multipartFiles, id);
+
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            ResponseDTO<Object> response = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity.badRequest().body(response); //오류 메시지 확인할 수 있도록
+        }
+    }
+
 }
