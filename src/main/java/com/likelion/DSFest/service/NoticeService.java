@@ -119,12 +119,12 @@ public class NoticeService {
         NoticeDTO.responseNoticeDTO responseDTO = NoticeDTO.toDto(originalNotice);
 
         //이미지가 없는 경우 빼고는 다 다시 올려서 연결
-        if (multipartFiles != null) {
-            List<Image> images = imageUpdate(multipartFiles, id); //이미지 업데이트
+        List<Image> images = imageUpdate(multipartFiles, id); //이미지 업데이트
+        if (images != null) {
             List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
             responseDTO.setImages(imageDTOS); //dto에 이미지들 추가
-            noticeDTOS.add(responseDTO);
         }
+        noticeDTOS.add(responseDTO);
 
         return ResponseDTO.<NoticeDTO.responseNoticeDTO>builder()
                 .message("수정 완료")
@@ -141,6 +141,9 @@ public class NoticeService {
 
         imageRepository.deleteByNotice_NoticeId(id); //기존 이미지 데이터 베이스에서 모두 삭제
 
+        if (multipartFiles == null) {
+            return null;
+        }
         return multipartFiles.stream().map(multipartFile -> {
                     String imageUrl = s3Manager.uploadFile(multipartFile); //이미지 새로 저장
                     Image image = Image.builder()
