@@ -1,12 +1,17 @@
 package com.likelion.DSFest.service;
 
 import com.likelion.DSFest.dto.NoticeDTO;
+import com.likelion.DSFest.dto.ResponseDTO;
 import com.likelion.DSFest.entity.Notice;
 import com.likelion.DSFest.repository.NoticeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -25,6 +30,16 @@ public class NoticeService {
         noticeRepository.save(notice); // 저장
 
         return "등록 성공";
+    }
+
+    public ResponseDTO<NoticeDTO> readAll() {
+        List<Notice> notices = noticeRepository.findAll();
+        List<NoticeDTO> noticeDTOS = new ArrayList<>();
+        for(Notice n : notices) {
+            noticeDTOS.add(NoticeDTO.toDto(n));
+        }
+        ResponseDTO<NoticeDTO> responseDTO= new ResponseDTO<>("조회되었습니다.", noticeDTOS);
+        return responseDTO;
     }
     
 

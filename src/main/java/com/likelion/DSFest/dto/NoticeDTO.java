@@ -36,4 +36,15 @@ public class NoticeDTO {
                 .category(noticeDTO.getCategory())
                 .build();
     }
+    public static NoticeDTO toDto(final Notice notice) {
+        return NoticeDTO.builder()
+                .title(notice.getTitle())
+                .content(notice.getContent())
+                .createdAt(Timestamp.valueOf(notice.getCreatedAt()))
+                .category(notice.getCategory())
+                .images(null)
+                .build();
+    }
+
+
 }

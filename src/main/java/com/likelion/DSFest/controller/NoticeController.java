@@ -5,10 +5,7 @@ import com.likelion.DSFest.dto.ResponseDTO;
 import com.likelion.DSFest.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin")
@@ -28,5 +25,11 @@ public class NoticeController {
 
             return ResponseEntity.badRequest().body(response);
         }
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ResponseDTO> readAll() {
+        ResponseDTO response = noticeService.readAll();
+        return ResponseEntity.ok().body(response);
     }
 }
