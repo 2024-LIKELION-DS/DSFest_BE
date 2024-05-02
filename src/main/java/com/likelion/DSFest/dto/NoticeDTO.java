@@ -42,7 +42,7 @@ public class NoticeDTO {
         private String content;
         private Timestamp createdAt;
         private Category category;
-        private List<Image> images;
+        private List<ImageDTO.responseImageDTO> images;
     }
 
 

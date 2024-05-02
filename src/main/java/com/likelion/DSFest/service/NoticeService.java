@@ -1,6 +1,7 @@
 package com.likelion.DSFest.service;
 
 import com.likelion.DSFest.aws.s3.AmazonS3Manager;
+import com.likelion.DSFest.dto.ImageDTO;
 import com.likelion.DSFest.dto.NoticeDTO;
 import com.likelion.DSFest.dto.ResponseDTO;
 import com.likelion.DSFest.entity.Image;
@@ -69,7 +70,14 @@ public class NoticeService {
             NoticeDTO.responseNoticeDTO noticeDTO = NoticeDTO.toDto(n);
 
             //이미지 넣기
-            noticeDTO.setImages(imageRepository.findByNotice_NoticeId(n.getNoticeId()));
+            List<Image> images = imageRepository.findByNotice_NoticeId(n.getNoticeId());
+
+            List<ImageDTO.responseImageDTO> imageDTOS = new ArrayList<>();
+            for(Image image : images) {
+                ImageDTO.responseImageDTO imageDTO = ImageDTO.toDto(image);
+                imageDTOS.add(imageDTO);
+            }
+            noticeDTO.setImages(imageDTOS);
 
             noticeDTOS.add(noticeDTO);
         }
@@ -83,8 +91,15 @@ public class NoticeService {
                 .map(NoticeDTO::toDto) // Notice를 NoticeDTO로 변환하는 메소드를 호출
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다."));
 
-        noticeDTO.setImages(imageRepository.findByNotice_NoticeId(id)); // 이미지 세팅
-        
+        List<Image> images = imageRepository.findByNotice_NoticeId(id);
+
+        List<ImageDTO.responseImageDTO> imageDTOS = new ArrayList<>();
+        for(Image image : images) {
+            ImageDTO.responseImageDTO imageDTO = ImageDTO.toDto(image);
+            imageDTOS.add(imageDTO);
+        }
+        noticeDTO.setImages(imageDTOS);
+
         List<NoticeDTO.responseNoticeDTO> noticeDTOS = new ArrayList<>();
         noticeDTOS.add(noticeDTO);
 
