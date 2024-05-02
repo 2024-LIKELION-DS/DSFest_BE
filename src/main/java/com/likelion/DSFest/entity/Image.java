@@ -16,6 +16,8 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer imageId;
 
+    private String imageUrl;
+
     @ManyToOne
     @JoinColumn(name = "notice_id", nullable = false)
     private Notice notice;
