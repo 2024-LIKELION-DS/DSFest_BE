@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class NoticeDTO {
+
     private Integer id;
     private String title;
     private String content;
@@ -23,15 +24,41 @@ public class NoticeDTO {
     private Category category;
     private List<Image> images; //이미지는 따로 붙일게염
 
-    public static Notice toEntity(final NoticeDTO noticeDTO) {
+    @Builder
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class requestNoticeDTO {
+        private String title;
+        private String content;
+        private Timestamp createdAt;
+        private Category category;
+    }
+
+    @Builder
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class responseNoticeDTO {
+        private Integer id;
+        private String title;
+        private String content;
+        private Timestamp createdAt;
+        private Category category;
+        private List<Image> images;
+    }
+
+
+
+    public static Notice toEntity(final NoticeDTO.requestNoticeDTO noticeDTO) {
         return Notice.builder()
                 .title(noticeDTO.getTitle())
                 .content(noticeDTO.getContent())
                 .category(noticeDTO.getCategory())
                 .build();
     }
-    public static NoticeDTO toDto(final Notice notice) {
-        return NoticeDTO.builder()
+    public static NoticeDTO.responseNoticeDTO toDto(final Notice notice) {
+        return NoticeDTO.responseNoticeDTO.builder()
                 .id(notice.getNoticeId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
