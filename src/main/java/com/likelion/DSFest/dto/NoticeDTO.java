@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class NoticeDTO {
+    private Integer id;
     private String title;
     private String content;
     private Timestamp createdAt;
@@ -38,6 +39,7 @@ public class NoticeDTO {
     }
     public static NoticeDTO toDto(final Notice notice) {
         return NoticeDTO.builder()
+                .id(notice.getNoticeId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
                 .createdAt(Timestamp.valueOf(notice.getCreatedAt()))
