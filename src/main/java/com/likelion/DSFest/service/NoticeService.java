@@ -1,5 +1,6 @@
 package com.likelion.DSFest.service;
 
+import com.likelion.DSFest.aws.s3.AmazonS3Manager;
 import com.likelion.DSFest.dto.NoticeDTO;
 import com.likelion.DSFest.entity.Image;
 import com.likelion.DSFest.entity.Notice;
@@ -23,6 +24,9 @@ public class NoticeService {
     @Autowired
     private ImageRepository imageRepository;
 
+    @Autowired
+    private AmazonS3Manager s3Manager;
+
     public String create(NoticeDTO noticeDTO, List<MultipartFile> multipartFiles) {
         Notice notice = NoticeDTO.toEntity(noticeDTO); //엔티티로 변경
 
@@ -33,12 +37,13 @@ public class NoticeService {
         //이미지 저장
         multipartFiles.forEach(multipartFile -> {
             try {
+                String fileurl = s3Manager.uploadFile(multipartFile);
                 Image image = Image.builder()
-                        .image(multipartFile.getOriginalFilename()) // You might want to store the actual image content instead of name
+                        .imageUrl(fileurl) // s3에 업로드한 이미지 url 받아서 저장
                         .notice(notice)
                         .build();
-                imageRepository.save(image); // Save the image to the database
-            } catch (Exception e) {
+                imageRepository.save(image); // 이미지 저장
+            } catch (Exception e) { // 객체 저장 시 에러 발생 => 예외 처리
                 log.error("Error occurred while saving image: {}", e.getMessage());
                 throw new RuntimeException("Failed to save image");
             }
