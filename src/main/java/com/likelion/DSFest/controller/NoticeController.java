@@ -22,12 +22,10 @@ public class NoticeController {
     private NoticeService noticeService;
 
     @PostMapping(path="", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> create(@RequestPart NoticeDTO noticeDTO,
+    public ResponseEntity<Object> create(@RequestPart NoticeDTO.requestNoticeDTO noticeDTO,
                                          @RequestPart (required=false) List<MultipartFile> multipartFiles) {
         try {
             String message = noticeService.create(noticeDTO, multipartFiles); //글과 이미지 등록
-
-
 
             ResponseDTO<Object> response = ResponseDTO.builder().message(message).build();
             return ResponseEntity.ok().body(response);

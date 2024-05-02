@@ -35,7 +35,7 @@ public class NoticeService {
     @Autowired
     private AmazonS3Manager s3Manager;
 
-    public String create(NoticeDTO noticeDTO, List<MultipartFile> multipartFiles) {
+    public String create(NoticeDTO.requestNoticeDTO noticeDTO, List<MultipartFile> multipartFiles) {
         Notice notice = NoticeDTO.toEntity(noticeDTO); //엔티티로 변경
 
         validate(notice); // 정보 확인
@@ -60,13 +60,13 @@ public class NoticeService {
         return "등록 성공";
     }
 
-    public ResponseDTO<NoticeDTO> readAll() {
+    public ResponseDTO<NoticeDTO.responseNoticeDTO> readAll() {
         List<Notice> notices = noticeRepository.findAll();
 
-        List<NoticeDTO> noticeDTOS = new ArrayList<>();
+        List<NoticeDTO.responseNoticeDTO> noticeDTOS = new ArrayList<>();
 
         for(Notice n : notices) {
-            NoticeDTO noticeDTO = NoticeDTO.toDto(n);
+            NoticeDTO.responseNoticeDTO noticeDTO = NoticeDTO.toDto(n);
 
             //이미지 넣기
             noticeDTO.setImages(imageRepository.findByNotice_NoticeId(n.getNoticeId()));
@@ -74,21 +74,21 @@ public class NoticeService {
             noticeDTOS.add(noticeDTO);
         }
 
-        ResponseDTO<NoticeDTO> responseDTO = new ResponseDTO<>("모든 공지사항을 조회했습니다.", noticeDTOS);
+        ResponseDTO<NoticeDTO.responseNoticeDTO> responseDTO = new ResponseDTO<>("모든 공지사항을 조회했습니다.", noticeDTOS);
         return responseDTO;
     }
 
-    public ResponseDTO<NoticeDTO> readOne(Integer id) {
-        NoticeDTO noticeDTO = noticeRepository.findById(id)
+    public ResponseDTO<NoticeDTO.responseNoticeDTO> readOne(Integer id) {
+        NoticeDTO.responseNoticeDTO noticeDTO = noticeRepository.findById(id)
                 .map(notice -> NoticeDTO.toDto(notice)) // Notice를 NoticeDTO로 변환하는 메소드를 호출
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다."));
 
         noticeDTO.setImages(imageRepository.findByNotice_NoticeId(id)); // 이미지 세팅
         
-        List<NoticeDTO> noticeDTOS = new ArrayList<>();
+        List<NoticeDTO.responseNoticeDTO> noticeDTOS = new ArrayList<>();
         noticeDTOS.add(noticeDTO);
 
-        ResponseDTO<NoticeDTO> responseDTO = new ResponseDTO<>("공지사항을 조회했습니다.", noticeDTOS);
+        ResponseDTO<NoticeDTO.responseNoticeDTO> responseDTO = new ResponseDTO<>("공지사항을 조회했습니다.", noticeDTOS);
         return responseDTO;
     }
 
