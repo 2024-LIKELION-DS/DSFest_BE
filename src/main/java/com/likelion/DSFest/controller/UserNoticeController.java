@@ -2,6 +2,9 @@ package com.likelion.DSFest.controller;
 
 import com.likelion.DSFest.dto.ResponseDTO;
 import com.likelion.DSFest.service.NoticeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +22,7 @@ public class UserNoticeController {
     }
 
     @GetMapping("read/all")
+    @Operation(summary = "사용자 입장에서의 모든 공지")
     public ResponseEntity<ResponseDTO> readAll() {
         try {
             ResponseDTO response = noticeService.readAll();
@@ -32,6 +36,10 @@ public class UserNoticeController {
     }
 
     @GetMapping("read/{id}")
+    @Operation(summary = "사용자 입장에서의 id로 조회한 공지")
+    @Parameters({
+            @Parameter(name = "id", description = "notice id로 조회하고자 하는 공지의 id")
+    })
     public ResponseEntity<ResponseDTO> readOne(@PathVariable Long id) {
         try {
             ResponseDTO response = noticeService.readOne(id);

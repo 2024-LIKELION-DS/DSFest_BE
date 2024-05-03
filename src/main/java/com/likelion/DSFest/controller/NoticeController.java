@@ -5,6 +5,9 @@ import com.likelion.DSFest.MultipartJackson2HttpMessageConverter;
 import com.likelion.DSFest.dto.NoticeDTO;
 import com.likelion.DSFest.dto.ResponseDTO;
 import com.likelion.DSFest.service.NoticeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import jakarta.servlet.annotation.MultipartConfig;
 import jdk.jfr.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,11 @@ public class NoticeController {
     }
 
     @PostMapping(path="", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "admin이 공지를 등록하는 api")
+    @Parameters({
+            @Parameter(name="responseNoticeDTO", description = "제목, 내용, 작성일, 카테고리가 들어가는 공지 입력"),
+            @Parameter(name="multifiles", description = "공지에 등록할 이미지 list")
+    })
     public ResponseEntity<Object> create(@RequestPart NoticeDTO.requestNoticeDTO noticeDTO,
                                          @RequestPart (required=false) List<MultipartFile> multipartFiles) {
         try {
@@ -40,6 +48,7 @@ public class NoticeController {
     }
 
     @GetMapping("read/all")
+    @Operation(summary = "admin이 읽는 모든 공지")
     public ResponseEntity<ResponseDTO> readAll() {
         try {
             ResponseDTO response = noticeService.readAll();
@@ -53,6 +62,9 @@ public class NoticeController {
     }
 
     @GetMapping("read/{id}")
+    @Operation(summary = "admin이 id로 하나의 공지를 읽어옴")
+    @Parameters({
+            @Parameter(name = "id", description = "notice id, 읽고자하는 공지의 id")})
     public ResponseEntity<ResponseDTO> readOne(@PathVariable Long id) {
         try {
             ResponseDTO response = noticeService.readOne(id);
