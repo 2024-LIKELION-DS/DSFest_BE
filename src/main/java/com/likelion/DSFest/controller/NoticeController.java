@@ -50,7 +50,7 @@ public class NoticeController {
     }
 
     @GetMapping("read/{id}")
-    public ResponseEntity<ResponseDTO> readOne(@PathVariable Integer id) {
+    public ResponseEntity<ResponseDTO> readOne(@PathVariable Long id) {
         try {
             ResponseDTO response = noticeService.readOne(id);
             return ResponseEntity.ok().body(response);
@@ -62,7 +62,7 @@ public class NoticeController {
     }
 
     @PutMapping(path="update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDTO> update(@PathVariable Integer id, @RequestPart NoticeDTO.requestNoticeDTO noticeDTO,
+    public ResponseEntity<ResponseDTO> update(@PathVariable Long id, @RequestPart NoticeDTO.requestNoticeDTO noticeDTO,
                                               @RequestPart (required=false) List<MultipartFile> multipartFiles) {
         try {
             //제목 내용 변경, 내부에 이미지 변경

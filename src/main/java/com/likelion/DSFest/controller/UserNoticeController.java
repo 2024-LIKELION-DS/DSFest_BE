@@ -29,7 +29,7 @@ public class UserNoticeController {
     }
 
     @GetMapping("read/{id}")
-    public ResponseEntity<ResponseDTO> readOne(@PathVariable Integer id) {
+    public ResponseEntity<ResponseDTO> readOne(@PathVariable Long id) {
         try {
             ResponseDTO response = noticeService.readOne(id);
             return ResponseEntity.ok().body(response);

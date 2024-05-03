@@ -37,7 +37,7 @@ public class NoticeDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class responseNoticeDTO {
-        private Integer id;
+        private Long id;
         private String title;
         private String content;
         private Timestamp createdAt;

@@ -16,7 +16,7 @@ public class ImageDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class responseImageDTO {
-        private Integer imageId;
+        private Long imageId;
         private String imageUrl;
     }
 
