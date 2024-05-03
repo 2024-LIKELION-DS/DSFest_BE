@@ -16,13 +16,13 @@ public class ImageDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class responseImageDTO {
-        private Integer imageId;
+        private Long id;
         private String imageUrl;
     }
 
     public static responseImageDTO toDto(final Image image) {
         return responseImageDTO.builder()
-                .imageId(image.getImageId())
+                .id(image.getId())
                 .imageUrl(image.getImageUrl())
                 .build();
     }

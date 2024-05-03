@@ -37,7 +37,7 @@ public class NoticeDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class responseNoticeDTO {
-        private Integer id;
+        private Long id;
         private String title;
         private String content;
         private Timestamp createdAt;
@@ -56,7 +56,7 @@ public class NoticeDTO {
     }
     public static NoticeDTO.responseNoticeDTO toDto(final Notice notice) {
         return NoticeDTO.responseNoticeDTO.builder()
-                .id(notice.getNoticeId())
+                .id(notice.getId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
                 .createdAt(Timestamp.valueOf(notice.getCreatedAt()))

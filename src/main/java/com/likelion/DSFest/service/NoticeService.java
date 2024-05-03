@@ -26,14 +26,17 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class NoticeService {
-    @Autowired
-    private NoticeRepository noticeRepository;
+    private final NoticeRepository noticeRepository;
 
-    @Autowired
-    private ImageRepository imageRepository;
+    private final ImageRepository imageRepository;
 
-    @Autowired
-    private AmazonS3Manager s3Manager;
+    private final AmazonS3Manager s3Manager;
+
+    public NoticeService(AmazonS3Manager s3Manager, ImageRepository imageRepository, NoticeRepository noticeRepository) {
+        this.s3Manager = s3Manager;
+        this.noticeRepository = noticeRepository;
+        this.imageRepository = imageRepository;
+    }
 
     public String create(NoticeDTO.requestNoticeDTO noticeDTO, List<MultipartFile> multipartFiles) {
         Notice notice = NoticeDTO.toEntity(noticeDTO); //엔티티로 변경
@@ -81,7 +84,7 @@ public class NoticeService {
         return responseDTO;
     }
 
-    public ResponseDTO<NoticeDTO.responseNoticeDTO> readOne(Integer id) {
+    public ResponseDTO<NoticeDTO.responseNoticeDTO> readOne(Long id) {
         NoticeDTO.responseNoticeDTO noticeDTO = noticeRepository.findById(id)
                 .map(NoticeDTO::toDto) // Notice를 NoticeDTO로 변환하는 메소드를 호출
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다."));
@@ -99,7 +102,7 @@ public class NoticeService {
     }
 
     @Transactional
-    public ResponseDTO<NoticeDTO.responseNoticeDTO> update(NoticeDTO.requestNoticeDTO noticeDTO, List<MultipartFile> multipartFiles,Integer id) {
+    public ResponseDTO<NoticeDTO.responseNoticeDTO> update(NoticeDTO.requestNoticeDTO noticeDTO, List<MultipartFile> multipartFiles,Long id) {
         Notice originalNotice = noticeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다"));
 
@@ -123,8 +126,8 @@ public class NoticeService {
         if (images != null) {
             List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
             responseDTO.setImages(imageDTOS); //dto에 이미지들 추가
+            noticeDTOS.add(responseDTO);
         }
-        noticeDTOS.add(responseDTO);
 
         return ResponseDTO.<NoticeDTO.responseNoticeDTO>builder()
                 .message("수정 완료")
@@ -134,7 +137,7 @@ public class NoticeService {
     }
 
     @Transactional
-    public List<Image> imageUpdate(List<MultipartFile> multipartFiles, Integer id) {
+    public List<Image> imageUpdate(List<MultipartFile> multipartFiles, Long id) {
         imageRepository.findByNotice_NoticeId(id).forEach(image -> { //s3에서 파일 삭제
             s3Manager.deleteFile(image.getImageUrl());
         });

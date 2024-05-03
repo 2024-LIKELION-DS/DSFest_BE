@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 public class Notice extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer noticeId; //글 id
+    private Long id; //글 id
 
     private String title; // 글 제목
 

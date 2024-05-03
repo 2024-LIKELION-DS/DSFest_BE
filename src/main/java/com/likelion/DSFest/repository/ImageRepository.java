@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ImageRepository extends JpaRepository<Image, Integer> {
-    public List<Image> findByNotice_NoticeId(Integer id);
-    public void deleteByNotice_NoticeId(Integer id);
+public interface ImageRepository extends JpaRepository<Image, Long> {
+    public List<Image> findByNotice_NoticeId(Long id);
+    public void deleteByNotice_NoticeId(Long id);
 }
