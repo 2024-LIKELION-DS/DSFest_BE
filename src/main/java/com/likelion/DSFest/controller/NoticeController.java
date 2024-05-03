@@ -8,6 +8,8 @@ import com.likelion.DSFest.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.servlet.annotation.MultipartConfig;
 import jdk.jfr.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +30,9 @@ public class NoticeController {
     }
 
     @PostMapping(path="", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "admin이 공지를 등록하는 api")
-    @Parameters({
-            @Parameter(name="responseNoticeDTO", description = "제목, 내용, 작성일, 카테고리가 들어가는 공지 입력"),
-            @Parameter(name="multifiles", description = "공지에 등록할 이미지 list")
-    })
-    public ResponseEntity<Object> create(@RequestPart NoticeDTO.requestNoticeDTO noticeDTO,
-                                         @RequestPart (required=false) List<MultipartFile> multipartFiles) {
+    @Operation(summary = "admin이 공지를 등록하는 api, category는 먼저 db에 등록 후 사용 가능")
+    public ResponseEntity<Object> create(@Parameter(name = "noticeDTO", description = "제목, 내용, 작성일, 카테고리가 들어가는 공지 입력") @RequestPart NoticeDTO.requestNoticeDTO noticeDTO,
+                                         @Parameter(name = "multipartFiles", description = "공지에 등록할 이미지 list, 현재 file 크기 max는 1000mb") @RequestPart (required=false) List<MultipartFile> multipartFiles) {
         try {
             String message = noticeService.create(noticeDTO, multipartFiles); //글과 이미지 등록
 
@@ -77,8 +75,12 @@ public class NoticeController {
     }
 
     @PutMapping(path="update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseDTO> update(@PathVariable Long id, @RequestPart NoticeDTO.requestNoticeDTO noticeDTO,
-                                              @RequestPart (required=false) List<MultipartFile> multipartFiles) {
+    @Operation(summary = "admin이 id에 해당하는 공지를 수정하는 api")
+    @Parameters({
+            @Parameter(name = "id", description = "변경하고자 하는 notice의 id")
+    })
+    public ResponseEntity<ResponseDTO> update(@PathVariable Long id, @Parameter(name = "noticeDTO", description = "변경할 내용이 담긴 noticeDTO") @RequestPart NoticeDTO.requestNoticeDTO noticeDTO,
+                                              @Parameter(name = "multipartFiles", description = "변경하고자 하는 이미지 list, 현재 파일 크기 max는 1000mb") @RequestPart (required=false) List<MultipartFile> multipartFiles) {
         try {
             //제목 내용 변경, 내부에 이미지 변경
             ResponseDTO response= noticeService.update(noticeDTO, multipartFiles, id);

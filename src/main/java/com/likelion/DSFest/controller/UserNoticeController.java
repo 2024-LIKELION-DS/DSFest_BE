@@ -36,7 +36,7 @@ public class UserNoticeController {
     }
 
     @GetMapping("read/{id}")
-    @Operation(summary = "사용자 입장에서의 id로 조회한 공지")
+    @Operation(summary = "사용자 입장에서의 조회하고자 하는 id로 조회한 공지")
     @Parameters({
             @Parameter(name = "id", description = "notice id로 조회하고자 하는 공지의 id")
     })
