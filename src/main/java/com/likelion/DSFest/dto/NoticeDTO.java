@@ -56,7 +56,7 @@ public class NoticeDTO {
     }
     public static NoticeDTO.responseNoticeDTO toDto(final Notice notice) {
         return NoticeDTO.responseNoticeDTO.builder()
-                .id(notice.getNoticeId())
+                .id(notice.getId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
                 .createdAt(Timestamp.valueOf(notice.getCreatedAt()))
