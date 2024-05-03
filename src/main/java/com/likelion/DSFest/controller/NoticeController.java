@@ -1,6 +1,7 @@
 package com.likelion.DSFest.controller;
 
 import ch.qos.logback.core.util.ContentTypeUtil;
+import com.amazonaws.Response;
 import com.likelion.DSFest.MultipartJackson2HttpMessageConverter;
 import com.likelion.DSFest.dto.NoticeDTO;
 import com.likelion.DSFest.dto.ResponseDTO;
@@ -8,8 +9,6 @@ import com.likelion.DSFest.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.servlet.annotation.MultipartConfig;
 import jdk.jfr.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,4 +91,20 @@ public class NoticeController {
         }
     }
 
+    @DeleteMapping("delete/{id}")
+    @Operation(summary = "admin이 공지 id를 전달하여 공지를 지우는 api")
+    @Parameters({
+            @Parameter(name = "id", description = "지우고자 하는 notice의 id")
+    })
+    public ResponseEntity<ResponseDTO> delete(@PathVariable Long id) {
+        try {
+            ResponseDTO response = noticeService.delete(id);
+            response.setMessage("삭제 완료");
+            return ResponseEntity.ok().body(response);
+
+        } catch (Exception e) {
+            ResponseDTO<Object> response = ResponseDTO.builder().message(e.getMessage()).build();
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 }

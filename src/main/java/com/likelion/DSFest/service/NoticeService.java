@@ -72,7 +72,7 @@ public class NoticeService {
             NoticeDTO.responseNoticeDTO noticeDTO = NoticeDTO.toDto(n);
 
             //이미지 넣기
-            List<Image> images = imageRepository.findByNotice_NoticeId(n.getNoticeId());
+            List<Image> images = imageRepository.findByNotice_NoticeId(n.getId());
 
             List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
             noticeDTO.setImages(imageDTOS);
@@ -156,6 +156,12 @@ public class NoticeService {
                     imageRepository.save(image);
             return image;
         }).collect(Collectors.toList());
+    }
+
+    public ResponseDTO<NoticeDTO.responseNoticeDTO> delete(Long id) {
+        noticeRepository.deleteById(id);
+
+        return readAll();
     }
 
 
