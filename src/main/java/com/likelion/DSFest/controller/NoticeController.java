@@ -1,17 +1,11 @@
 package com.likelion.DSFest.controller;
 
-import ch.qos.logback.core.util.ContentTypeUtil;
-import com.amazonaws.Response;
-import com.likelion.DSFest.MultipartJackson2HttpMessageConverter;
 import com.likelion.DSFest.dto.NoticeDTO;
 import com.likelion.DSFest.dto.ResponseDTO;
 import com.likelion.DSFest.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import jakarta.servlet.annotation.MultipartConfig;
-import jdk.jfr.ContentType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

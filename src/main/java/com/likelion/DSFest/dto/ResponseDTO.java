@@ -1,6 +1,5 @@
 package com.likelion.DSFest.dto;
 
-import com.likelion.DSFest.entity.Notice;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
