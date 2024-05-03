@@ -1,7 +1,6 @@
 package com.likelion.DSFest.dto;
 
 import com.likelion.DSFest.entity.Category;
-import com.likelion.DSFest.entity.Image;
 import com.likelion.DSFest.entity.Notice;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,13 +12,6 @@ import java.util.List;
 
 
 public class NoticeDTO {
-
-//    private Integer id;
-//    private String title;
-//    private String content;
-//    private Timestamp createdAt;
-//    private Category category;
-//    private List<Image> images; //이미지는 따로 붙일게염
 
     @Builder
     @Data

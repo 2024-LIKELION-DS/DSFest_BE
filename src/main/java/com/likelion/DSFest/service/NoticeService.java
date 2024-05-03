@@ -9,9 +9,7 @@ import com.likelion.DSFest.entity.Notice;
 import com.likelion.DSFest.repository.ImageRepository;
 import com.likelion.DSFest.repository.NoticeRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -72,7 +70,7 @@ public class NoticeService {
             NoticeDTO.responseNoticeDTO noticeDTO = NoticeDTO.toDto(n);
 
             //이미지 넣기
-            List<Image> images = imageRepository.findByNotice_NoticeId(n.getId());
+            List<Image> images = imageRepository.findByNotice_Id(n.getId());
 
             List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
             noticeDTO.setImages(imageDTOS);
@@ -80,8 +78,7 @@ public class NoticeService {
             noticeDTOS.add(noticeDTO);
         }
 
-        ResponseDTO<NoticeDTO.responseNoticeDTO> responseDTO = new ResponseDTO<>("모든 공지사항을 조회했습니다.", noticeDTOS);
-        return responseDTO;
+        return ResponseDTO.<NoticeDTO.responseNoticeDTO>builder().message("모든 공지사항을 조회했습니다.").data(noticeDTOS).build();
     }
 
     public ResponseDTO<NoticeDTO.responseNoticeDTO> readOne(Long id) {
@@ -89,7 +86,7 @@ public class NoticeService {
                 .map(NoticeDTO::toDto) // Notice를 NoticeDTO로 변환하는 메소드를 호출
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다."));
 
-        List<Image> images = imageRepository.findByNotice_NoticeId(id);
+        List<Image> images = imageRepository.findByNotice_Id(id);
 
         List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
         noticeDTO.setImages(imageDTOS);
@@ -97,8 +94,7 @@ public class NoticeService {
         List<NoticeDTO.responseNoticeDTO> noticeDTOS = new ArrayList<>();
         noticeDTOS.add(noticeDTO);
 
-        ResponseDTO<NoticeDTO.responseNoticeDTO> responseDTO = new ResponseDTO<>("공지사항을 조회했습니다.", noticeDTOS);
-        return responseDTO;
+        return ResponseDTO.<NoticeDTO.responseNoticeDTO>builder().message("공지사항을 조회했습니다.").data(noticeDTOS).build();
     }
 
     @Transactional
@@ -138,15 +134,16 @@ public class NoticeService {
 
     @Transactional
     public List<Image> imageUpdate(List<MultipartFile> multipartFiles, Long id) {
-        imageRepository.findByNotice_NoticeId(id).forEach(image -> { //s3에서 파일 삭제
+        imageRepository.findByNotice_Id(id).forEach(image -> { //s3에서 파일 삭제
             s3Manager.deleteFile(image.getImageUrl());
         });
 
-        imageRepository.deleteByNotice_NoticeId(id); //기존 이미지 데이터 베이스에서 모두 삭제
+        imageRepository.deleteByNotice_Id(id); //기존 이미지 데이터 베이스에서 모두 삭제
 
         if (multipartFiles == null) {
             return null;
         }
+
         return multipartFiles.stream().map(multipartFile -> {
                     String imageUrl = s3Manager.uploadFile(multipartFile); //이미지 새로 저장
                     Image image = Image.builder()

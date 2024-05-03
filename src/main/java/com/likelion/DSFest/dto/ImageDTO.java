@@ -1,6 +1,5 @@
 package com.likelion.DSFest.dto;
 
-import com.likelion.DSFest.entity.Category;
 import com.likelion.DSFest.entity.Image;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
