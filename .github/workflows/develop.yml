@@ -38,4 +38,18 @@ jobs:
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -f Dockerfile -t ${{ secrets.DOCKER_REPO }}/2024_ds_fest .
           docker push ${{ secrets.DOCKER_REPO }}/2024_ds_fest
-          
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        id: deploy
+        with:
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.PRIVATE_KEY }}
+          envs: GITHUB_SHA
+          script: |
+            sudo docker rm -f $(docker ps -qa)
+            sudo docker pull ${{ secrets.DOCKER_REPO }}/2024_ds_fest
+            docker-compose up -d
+            docker image prune -f
+            docker run -d --log-driver=syslog -p 8080:8080 ${{ secrets.DOCKER_REPO }}/2024_ds_fest
