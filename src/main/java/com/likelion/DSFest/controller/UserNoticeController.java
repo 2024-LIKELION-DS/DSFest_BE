@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 public class UserNoticeController {
-    @Autowired
-    private NoticeService noticeService;
+    private final NoticeService noticeService;
+
+    public UserNoticeController(NoticeService noticeService) {
+        this.noticeService = noticeService;
+    }
 
     @GetMapping("read/all")
     public ResponseEntity<ResponseDTO> readAll() {

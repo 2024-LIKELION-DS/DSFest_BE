@@ -18,8 +18,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin")
 public class NoticeController {
-    @Autowired
-    private NoticeService noticeService;
+    private final NoticeService noticeService;
+
+    public NoticeController(NoticeService noticeService) {
+        this.noticeService = noticeService;
+    }
 
     @PostMapping(path="", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> create(@RequestPart NoticeDTO.requestNoticeDTO noticeDTO,

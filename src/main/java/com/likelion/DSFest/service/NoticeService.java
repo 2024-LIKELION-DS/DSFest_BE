@@ -26,14 +26,17 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class NoticeService {
-    @Autowired
-    private NoticeRepository noticeRepository;
+    private final NoticeRepository noticeRepository;
 
-    @Autowired
-    private ImageRepository imageRepository;
+    private final ImageRepository imageRepository;
 
-    @Autowired
-    private AmazonS3Manager s3Manager;
+    private final AmazonS3Manager s3Manager;
+
+    public NoticeService(AmazonS3Manager s3Manager, ImageRepository imageRepository, NoticeRepository noticeRepository) {
+        this.s3Manager = s3Manager;
+        this.noticeRepository = noticeRepository;
+        this.imageRepository = imageRepository;
+    }
 
     public String create(NoticeDTO.requestNoticeDTO noticeDTO, List<MultipartFile> multipartFiles) {
         Notice notice = NoticeDTO.toEntity(noticeDTO); //엔티티로 변경
