@@ -21,7 +21,7 @@ public class NoticeDTO {
         private String title;
         private String content;
         private Timestamp createdAt;
-        private Category category;
+        private String categoryName;
     }
 
     @Builder
@@ -39,11 +39,11 @@ public class NoticeDTO {
 
 
 
-    public static Notice toEntity(final NoticeDTO.requestNoticeDTO noticeDTO) {
+    public static Notice toEntity(final NoticeDTO.requestNoticeDTO noticeDTO, final Category category) {
         return Notice.builder()
                 .title(noticeDTO.getTitle())
                 .content(noticeDTO.getContent())
-                .category(noticeDTO.getCategory())
+                .category(category)
                 .build();
     }
     public static NoticeDTO.responseNoticeDTO toDto(final Notice notice) {
