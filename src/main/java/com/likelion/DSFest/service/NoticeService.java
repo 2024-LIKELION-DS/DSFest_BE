@@ -46,7 +46,7 @@ public class NoticeService {
         noticeRepository.save(notice); // 글 저장
 
         //이미지 저장
-        if (multipartFiles != null) {
+        if (multipartFiles.isEmpty()) {
             multipartFiles.forEach(multipartFile -> {
                 try {
                     String fileurl = s3Manager.uploadFile(multipartFile);
