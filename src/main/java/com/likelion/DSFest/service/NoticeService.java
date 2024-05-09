@@ -6,6 +6,7 @@ import com.likelion.DSFest.dto.NoticeDTO;
 import com.likelion.DSFest.dto.ResponseDTO;
 import com.likelion.DSFest.entity.Image;
 import com.likelion.DSFest.entity.Notice;
+import com.likelion.DSFest.repository.CategoryRepository;
 import com.likelion.DSFest.repository.ImageRepository;
 import com.likelion.DSFest.repository.NoticeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 @Service
 @Slf4j
 public class NoticeService {
@@ -29,15 +29,17 @@ public class NoticeService {
     private final ImageRepository imageRepository;
 
     private final AmazonS3Manager s3Manager;
+    private final CategoryRepository categoryRepository;
 
-    public NoticeService(AmazonS3Manager s3Manager, ImageRepository imageRepository, NoticeRepository noticeRepository) {
+    public NoticeService(AmazonS3Manager s3Manager, ImageRepository imageRepository, NoticeRepository noticeRepository, CategoryRepository categoryRepository) {
         this.s3Manager = s3Manager;
         this.noticeRepository = noticeRepository;
         this.imageRepository = imageRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public String create(NoticeDTO.requestNoticeDTO noticeDTO, List<MultipartFile> multipartFiles) {
-        Notice notice = NoticeDTO.toEntity(noticeDTO); //엔티티로 변경
+        Notice notice = NoticeDTO.toEntity(noticeDTO, categoryRepository.findByName(noticeDTO.getCategoryName())); //엔티티로 변경
 
         validate(notice); // 정보 확인
 
@@ -102,7 +104,7 @@ public class NoticeService {
         Notice originalNotice = noticeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 공지사항을 찾을 수 없습니다"));
 
-        if (noticeDTO.getTitle() == null || noticeDTO.getContent() == null || noticeDTO.getCategory() == null) { // 셋 중 하나 널이면
+        if (noticeDTO.getTitle() == null || noticeDTO.getContent() == null || noticeDTO.getCategoryName() == null) { // 셋 중 하나 널이면
             log.warn("빈칸이 존재할 수 없습니다.");
             throw new RuntimeException("수정 시 빈칸이 존재할 수 없습니다.");
         }
@@ -110,7 +112,7 @@ public class NoticeService {
         //수정
         originalNotice.setTitle(noticeDTO.getTitle());
         originalNotice.setContent(noticeDTO.getContent());
-        originalNotice.setCategory(noticeDTO.getCategory());
+        originalNotice.setCategory(categoryRepository.findByName(noticeDTO.getCategoryName()));
         noticeRepository.save(originalNotice);
 
         //responseDTO 구현
