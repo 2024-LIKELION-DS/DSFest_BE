@@ -1,4 +1,4 @@
-package com.likelion.DSFest.global.config;
+package com.likelion.DSFest.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
