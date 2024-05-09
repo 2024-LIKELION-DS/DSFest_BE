@@ -46,19 +46,22 @@ public class NoticeService {
         noticeRepository.save(notice); // 글 저장
 
         //이미지 저장
-        multipartFiles.forEach(multipartFile -> {
-            try {
-                String fileurl = s3Manager.uploadFile(multipartFile);
-                Image image = Image.builder()
-                        .imageUrl(fileurl) // s3에 업로드한 이미지 url 받아서 저장
-                        .notice(notice)
-                        .build();
-                imageRepository.save(image); // 이미지 저장
-            } catch (Exception e) { // 객체 저장 시 에러 발생 => 예외 처리
-                log.error("Error occurred while saving image: {}", e.getMessage());
-                throw new RuntimeException("Failed to save image");
-            }
-        });
+        if (multipartFiles != null) {
+            multipartFiles.forEach(multipartFile -> {
+                try {
+                    String fileurl = s3Manager.uploadFile(multipartFile);
+                    Image image = Image.builder()
+                            .imageUrl(fileurl) // s3에 업로드한 이미지 url 받아서 저장
+                            .notice(notice)
+                            .build();
+                    imageRepository.save(image); // 이미지 저장
+                } catch (Exception e) { // 객체 저장 시 에러 발생 => 예외 처리
+                    log.error("Error occurred while saving image: {}", e.getMessage());
+                    throw new RuntimeException("Failed to save image");
+                }
+            });
+        }
+
 
         return "등록 성공";
     }
