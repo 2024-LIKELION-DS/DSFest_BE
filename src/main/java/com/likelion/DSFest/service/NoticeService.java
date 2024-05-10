@@ -21,6 +21,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+// 페이지네이션
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 @Service
 @Slf4j
 public class NoticeService {
@@ -64,6 +70,35 @@ public class NoticeService {
 
 
         return "등록 성공";
+    }
+
+    public ResponseDTO<NoticeDTO.responseNoticeDTO> readPagenation(Integer page, Integer size) {
+        // page 1부터 시작할 수 있도록 page + 1 설정
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        // DB에서 페이지네이션된 데이터 가져옴
+        Page<Notice> noticePage = noticeRepository.findAllByOrderByCreatedAtDesc(pageable);
+
+        // Page 객체에서 List 추출
+        List<Notice> notices = noticePage.getContent();
+
+        // DTO 리스트 생성
+        List<NoticeDTO.responseNoticeDTO> noticeDTOS = new ArrayList<>();
+        for (Notice notice : notices) {
+            NoticeDTO.responseNoticeDTO noticeDTO = NoticeDTO.toDto(notice);
+
+            // 이미지 넣기
+            List<Image> images = imageRepository.findByNotice_Id(notice.getId());
+            List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
+            noticeDTO.setImages(imageDTOS);
+
+            noticeDTOS.add(noticeDTO);
+        }
+
+        return ResponseDTO.<NoticeDTO.responseNoticeDTO>builder()
+                .message("page : " + page + ", size : " + size + " 공지사항을 조회했습니다.")
+                .data(noticeDTOS)
+                .build();
     }
 
     public ResponseDTO<NoticeDTO.responseNoticeDTO> readAll() {

@@ -5,11 +5,9 @@ import com.likelion.DSFest.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import jakarta.websocket.server.PathParam;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -20,11 +18,18 @@ public class UserNoticeController {
         this.noticeService = noticeService;
     }
 
-    @GetMapping("read/all")
-    @Operation(summary = "사용자 입장에서의 모든 공지")
-    public ResponseEntity<ResponseDTO> readAll() {
+    @GetMapping("read")
+    @Operation(summary = "사용자 입장에서의 공지 페이지네이션 적용")
+    @Parameters({
+            @Parameter(name = "page", required = false, description = "page 번호"),
+            @Parameter(name = "size", required = false, description = "한번에 볼 페이지 사이즈")
+    })
+    public ResponseEntity<ResponseDTO> readAll(
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "size", defaultValue = "5") Integer size
+    ) {
         try {
-            ResponseDTO response = noticeService.readAll();
+            ResponseDTO response = noticeService.readPagenation(page, size);
             return ResponseEntity.ok().body(response);
 
         } catch (Exception e) {
