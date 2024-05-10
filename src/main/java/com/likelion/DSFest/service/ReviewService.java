@@ -8,6 +8,7 @@ import com.likelion.DSFest.entity.Review;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 
 @Service
 @Slf4j
@@ -21,13 +22,15 @@ public class ReviewService {
 
     //후기 조회
     public ResponseDTO<ReviewDTO.responseReviewDTO> read() {
-        List<Review> reviews = reviewRepository.findAll();
+        //최신순 정렬
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        List<Review> reviews = reviewRepository.findAll(sort);
         List<ReviewDTO.responseReviewDTO> reviewDTOS = new ArrayList<>();
 
         for(Review n : reviews) {
             ReviewDTO.responseReviewDTO reviewDTO = ReviewDTO.toDto(n);
             reviewDTOS.add(reviewDTO);
-        }
+        } 
         return ResponseDTO.<ReviewDTO.responseReviewDTO>builder().message("모든 후기를 조회했습니다.").data(reviewDTOS).build();
     }
 
