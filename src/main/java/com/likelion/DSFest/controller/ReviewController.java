@@ -52,6 +52,12 @@ public class ReviewController {
     }
 
 
+    @GetMapping("/healthcheck")
+    public String healthcheck() {
+    	return "OK";
+    }
+
+
 }
 
 
