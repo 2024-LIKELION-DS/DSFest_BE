@@ -25,8 +25,8 @@ public class UserNoticeController {
             @Parameter(name = "size", required = false, description = "한번에 볼 페이지 사이즈")
     })
     public ResponseEntity<ResponseDTO> readAll(
-            @RequestParam(value = "page", defaultValue = "1") Integer page,
-            @RequestParam(value = "size", defaultValue = "5") Integer size
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") Integer size
     ) {
         try {
             ResponseDTO response = noticeService.readPagenation(page, size);
