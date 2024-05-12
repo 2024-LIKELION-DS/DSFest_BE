@@ -33,7 +33,6 @@ public class NoticeDTO {
         private Long id;
         private String title;
         private String content;
-        private Timestamp createdAt;
         private Category category;
         private List<ImageDTO.responseImageDTO> images;
     }
@@ -52,7 +51,6 @@ public class NoticeDTO {
                 .id(notice.getId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
-                .createdAt(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("Asia/Seoul"))))
                 .category(notice.getCategory())
                 // .images(null)
                 .build();
