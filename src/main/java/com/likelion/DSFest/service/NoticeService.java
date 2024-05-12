@@ -93,6 +93,9 @@ public class NoticeService {
             List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
             noticeDTO.setImages(imageDTOS);
 
+            // 이미지 개수 넣기
+            noticeDTO.setImageNum(images.size());
+
             noticeDTOS.add(noticeDTO);
         }
 

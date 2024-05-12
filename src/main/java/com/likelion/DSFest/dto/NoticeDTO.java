@@ -34,6 +34,7 @@ public class NoticeDTO {
         private String title;
         private String content;
         private Category category;
+        private Integer imageNum;
         private List<ImageDTO.responseImageDTO> images;
     }
 
@@ -47,7 +48,7 @@ public class NoticeDTO {
                 .build();
     }
     public static NoticeDTO.responseNoticeDTO toDto(final Notice notice) {
-        return NoticeDTO.responseNoticeDTO.builder()
+        return responseNoticeDTO.builder()
                 .id(notice.getId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
