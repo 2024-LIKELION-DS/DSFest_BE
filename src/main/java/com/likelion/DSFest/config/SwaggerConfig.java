@@ -18,10 +18,10 @@ public class SwaggerConfig {
                 .version("1.0.0");
 
         Server localServer = new Server();
-        localServer.setUrl("http://localhost:8080");
+        localServer.setUrl("https://likelion-ds.site");
 
         Server testServer = new Server();
-        testServer.setUrl("https://likelion-ds.site"); // https에 접근 가능하게 설정
+        testServer.setUrl("http://localhost:8080"); // https에 접근 가능하게 설정
 
         return new OpenAPI()
                 .info(info)
