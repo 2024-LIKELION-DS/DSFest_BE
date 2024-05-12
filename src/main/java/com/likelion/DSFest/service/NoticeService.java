@@ -137,6 +137,8 @@ public class NoticeService {
         List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
         noticeDTO.setImages(imageDTOS);
 
+        noticeDTO.setImageNum(images.size());
+
         List<NoticeDTO.responseNoticeDTO> noticeDTOS = new ArrayList<>();
         noticeDTOS.add(noticeDTO);
 
