@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 
@@ -20,7 +22,6 @@ public class NoticeDTO {
     public static class requestNoticeDTO {
         private String title;
         private String content;
-        private Timestamp createdAt;
         private String categoryName;
     }
 
@@ -51,7 +52,7 @@ public class NoticeDTO {
                 .id(notice.getId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
-                .createdAt(Timestamp.valueOf(notice.getCreatedAt()))
+                .createdAt(Timestamp.valueOf(LocalDateTime.now(ZoneId.of("Asia/Seoul"))))
                 .category(notice.getCategory())
                 // .images(null)
                 .build();
