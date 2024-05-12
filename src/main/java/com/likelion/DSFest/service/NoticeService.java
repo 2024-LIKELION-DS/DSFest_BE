@@ -3,6 +3,7 @@ package com.likelion.DSFest.service;
 import com.likelion.DSFest.aws.s3.AmazonS3Manager;
 import com.likelion.DSFest.dto.ImageDTO;
 import com.likelion.DSFest.dto.NoticeDTO;
+import com.likelion.DSFest.dto.NoticeResponseDTO;
 import com.likelion.DSFest.dto.ResponseDTO;
 import com.likelion.DSFest.entity.Image;
 import com.likelion.DSFest.entity.Notice;
@@ -72,7 +73,7 @@ public class NoticeService {
         return "등록 성공";
     }
 
-    public ResponseDTO<NoticeDTO.responseNoticeDTO> readPagenation(Integer page, Integer size) {
+    public NoticeResponseDTO<NoticeDTO.responseNoticeDTO> readPagenation(Integer page, Integer size) {
         // page 1부터 시작할 수 있도록 page + 1 설정
         Pageable pageable = PageRequest.of(page - 1, size);
 
@@ -95,10 +96,12 @@ public class NoticeService {
             noticeDTOS.add(noticeDTO);
         }
 
-        return ResponseDTO.<NoticeDTO.responseNoticeDTO>builder()
-                .message("page : " + page + ", size : " + size + " 공지사항을 조회했습니다.")
-                .data(noticeDTOS)
-                .build();
+        return new NoticeResponseDTO(
+                "page : " + page + ", size : " + size + " 공지사항을 조회했습니다.",
+                getTotalNoticeCount(),
+                noticeDTOS
+        );
+
     }
 
     public ResponseDTO<NoticeDTO.responseNoticeDTO> readAll() {
@@ -218,5 +221,9 @@ public class NoticeService {
             log.warn("Entity content cannot be null");
             throw new RuntimeException("Entity content cannot be null");
         }
+    }
+
+    public Long getTotalNoticeCount() {
+        return noticeRepository.count();
     }
 }
