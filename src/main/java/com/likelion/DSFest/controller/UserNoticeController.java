@@ -1,5 +1,6 @@
 package com.likelion.DSFest.controller;
 
+import com.likelion.DSFest.dto.NoticeResponseDTO;
 import com.likelion.DSFest.dto.ResponseDTO;
 import com.likelion.DSFest.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,16 +25,16 @@ public class UserNoticeController {
             @Parameter(name = "page", required = false, description = "page 번호"),
             @Parameter(name = "size", required = false, description = "한번에 볼 페이지 사이즈")
     })
-    public ResponseEntity<ResponseDTO> readAll(
+    public ResponseEntity<NoticeResponseDTO> readAll(
             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
             @RequestParam(value = "size", required = false, defaultValue = "5") Integer size
     ) {
         try {
-            ResponseDTO response = noticeService.readPagenation(page, size);
+            NoticeResponseDTO response = noticeService.readPagenation(page, size);
             return ResponseEntity.ok().body(response);
 
         } catch (Exception e) {
-            ResponseDTO<Object> response = ResponseDTO.builder().message(e.getMessage()).build();
+            NoticeResponseDTO<Object> response = NoticeResponseDTO.builder().message(e.getMessage()).build();
             return ResponseEntity.badRequest().body(response); //오류 메시지 확인할 수 있도록
         }
 
