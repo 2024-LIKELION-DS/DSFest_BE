@@ -53,7 +53,7 @@ public class NoticeService {
         noticeRepository.save(notice); // 글 저장
 
         //이미지 저장
-        if (!multipartFiles.isEmpty()) {
+        if (multipartFiles != null) {
             multipartFiles.forEach(multipartFile -> {
                 try {
                     String fileurl = s3Manager.uploadFile(multipartFile);
@@ -68,9 +68,21 @@ public class NoticeService {
                 }
             });
         }
+        else {
+            log.warn("No files provided");
+        }
 
 
         return "등록 성공";
+    }
+    public String createWithNoImage(NoticeDTO.requestNoticeDTO noticeDTO) {
+        Notice notice = NoticeDTO.toEntity(noticeDTO, categoryRepository.findByName(noticeDTO.getCategoryName())); //엔티티로 변경
+
+        validate(notice); // 정보 확인
+
+        noticeRepository.save(notice); // 글 저장
+
+        return "이미지 없이 등록 성공";
     }
 
     public NoticeResponseDTO<NoticeDTO.responseNoticeDTO> readPagenation(Integer page, Integer size) {
