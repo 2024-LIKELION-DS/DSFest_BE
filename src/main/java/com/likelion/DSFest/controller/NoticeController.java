@@ -29,13 +29,18 @@ public class NoticeController {
     public ResponseEntity<Object> create(@Parameter(name = "noticeDTO", description = "제목, 내용, 작성일, 카테고리가 들어가는 공지 입력") @RequestPart NoticeDTO.requestNoticeDTO noticeDTO,
                                          @Parameter(name = "multipartFiles", description = "공지에 등록할 이미지 list, 현재 file 크기 max는 1000mb") @RequestPart (required=false) List<MultipartFile> multipartFiles) {
         try {
-            String message = noticeService.create(noticeDTO, multipartFiles); //글과 이미지 등록
+            String message = "";
+            if (multipartFiles != null) {
+                message = noticeService.create(noticeDTO, multipartFiles); //글과 이미지 등록
+            }
+            else {
+                message = noticeService.createWithNoImage(noticeDTO); //글과 이미지 등록
+            }
 
             ResponseDTO<Object> response = ResponseDTO.builder().message(message).build();
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             ResponseDTO<Object> response = ResponseDTO.builder().message(e.getMessage()).build();
-
             return ResponseEntity.badRequest().body(response);
         }
     }
