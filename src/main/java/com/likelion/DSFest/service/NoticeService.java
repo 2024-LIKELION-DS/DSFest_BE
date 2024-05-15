@@ -216,6 +216,7 @@ public class NoticeService {
         }).collect(Collectors.toList());
     }
 
+    @Transactional
     public ResponseDTO<NoticeDTO.responseNoticeDTO> delete(Long id) {
 
         noticeRepository.deleteById(id);
