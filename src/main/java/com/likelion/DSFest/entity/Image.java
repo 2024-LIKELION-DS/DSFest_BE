@@ -18,7 +18,7 @@ public class Image {
 
     private String imageUrl;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "notice_id", nullable = false)
     private Notice notice;
 }
