@@ -217,7 +217,6 @@ public class NoticeService {
     }
 
     public ResponseDTO<NoticeDTO.responseNoticeDTO> delete(Long id) {
-        imageRepository.deleteByNotice_Id(id);
 
         noticeRepository.deleteById(id);
 
