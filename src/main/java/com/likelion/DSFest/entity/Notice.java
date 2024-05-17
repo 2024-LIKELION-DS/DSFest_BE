@@ -22,6 +22,7 @@ public class Notice extends BaseEntity{
 
     private String title; // 글 제목
 
+    @Column(length = 1000)
     private String content; // 글 내용
 
     @ManyToOne
