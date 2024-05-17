@@ -120,7 +120,7 @@ public class NoticeService {
     }
 
     public ResponseDTO<NoticeDTO.responseNoticeDTO> readAll() {
-        List<Notice> notices = noticeRepository.findAll();
+        List<Notice> notices = noticeRepository.findAllByOrderByCreatedAtDesc();
 
         List<NoticeDTO.responseNoticeDTO> noticeDTOS = new ArrayList<>();
 

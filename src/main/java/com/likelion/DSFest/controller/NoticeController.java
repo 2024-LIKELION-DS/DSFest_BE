@@ -46,21 +46,15 @@ public class NoticeController {
     }
 
     @GetMapping("read")
-    @Operation(summary = "admin이 읽는 공지 페이지네이션 적용")
-    @Parameters({
-            @Parameter(name = "page", required = false, description = "page 번호"),
-            @Parameter(name = "size", required = false, description = "한번에 볼 페이지 사이즈")
-    })
-    public ResponseEntity<NoticeResponseDTO> readAll(
-            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-            @RequestParam(value = "size", required = false, defaultValue = "5") Integer size
-    ) {
+    @Operation(summary = "admin이 읽는 공지 페이지네이션 미적용")
+
+    public ResponseEntity<ResponseDTO> readAll() {
         try {
-            NoticeResponseDTO response = noticeService.readPagenation(page, size);
+            ResponseDTO response = noticeService.readAll();
             return ResponseEntity.ok().body(response);
             
         } catch (Exception e) {
-            NoticeResponseDTO<Object> response = NoticeResponseDTO.builder().message(e.getMessage()).build();
+            ResponseDTO<Object> response = ResponseDTO.builder().message(e.getMessage()).build();
             return ResponseEntity.badRequest().body(response); //오류 메시지 확인할 수 있도록
         }
 
