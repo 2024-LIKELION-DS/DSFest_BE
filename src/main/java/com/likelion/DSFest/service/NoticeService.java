@@ -85,7 +85,7 @@ public class NoticeService {
         return "이미지 없이 등록 성공";
     }
 
-    public NoticeResponseDTO<NoticeDTO.responseNoticeDTO> readPagenation(Integer page, Integer size) {
+    public NoticeResponseDTO<NoticeDTO.responseNoticeListDto> readPagenation(Integer page, Integer size) {
         // page 1부터 시작할 수 있도록 page + 1 설정
         Pageable pageable = PageRequest.of(page - 1, size);
 
@@ -96,17 +96,18 @@ public class NoticeService {
         List<Notice> notices = noticePage.getContent();
 
         // DTO 리스트 생성
-        List<NoticeDTO.responseNoticeDTO> noticeDTOS = new ArrayList<>();
-        for (Notice notice : notices) {
-            NoticeDTO.responseNoticeDTO noticeDTO = NoticeDTO.toDto(notice);
+        List<NoticeDTO.responseNoticeListDto> noticeDTOS = new ArrayList<>();
+        for (Notice n : notices) {
+            NoticeDTO.responseNoticeListDto noticeDTO = NoticeDTO.toListDto(n);
 
-            // 이미지 넣기
-            List<Image> images = imageRepository.findByNotice_Id(notice.getId());
-            List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
-            noticeDTO.setImages(imageDTOS);
+            // 썸네일 이미지 넣기
+            List<Image> images = imageRepository.findByNotice_Id(n.getId());
 
-            // 이미지 개수 넣기
-            noticeDTO.setImageNum(images.size());
+            if (!images.isEmpty()) {
+                // 첫 번째 이미지를 썸네일로 사용
+                ImageDTO.responseImageDTO thumbnail = ImageDTO.toDto(images.get(0));
+                noticeDTO.setThumbnail(thumbnail);
+            }
 
             noticeDTOS.add(noticeDTO);
         }
@@ -119,24 +120,27 @@ public class NoticeService {
 
     }
 
-    public ResponseDTO<NoticeDTO.responseNoticeDTO> readAll() {
+    public ResponseDTO<NoticeDTO.responseNoticeListDto> readAll() {
         List<Notice> notices = noticeRepository.findAllByOrderByCreatedAtDesc();
 
-        List<NoticeDTO.responseNoticeDTO> noticeDTOS = new ArrayList<>();
+        List<NoticeDTO.responseNoticeListDto> noticeDTOS = new ArrayList<>();
 
-        for(Notice n : notices) {
-            NoticeDTO.responseNoticeDTO noticeDTO = NoticeDTO.toDto(n);
+        for (Notice n : notices) {
+            NoticeDTO.responseNoticeListDto noticeDTO = NoticeDTO.toListDto(n);
 
-            //이미지 넣기
+            // 썸네일 이미지 넣기
             List<Image> images = imageRepository.findByNotice_Id(n.getId());
 
-            List<ImageDTO.responseImageDTO> imageDTOS = images.stream().map(ImageDTO::toDto).collect(Collectors.toList());
-            noticeDTO.setImages(imageDTOS);
+            if (!images.isEmpty()) {
+                // 첫 번째 이미지를 썸네일로 사용
+                ImageDTO.responseImageDTO thumbnail = ImageDTO.toDto(images.get(0));
+                noticeDTO.setThumbnail(thumbnail);
+            }
 
             noticeDTOS.add(noticeDTO);
         }
 
-        return ResponseDTO.<NoticeDTO.responseNoticeDTO>builder().message("모든 공지사항을 조회했습니다.").data(noticeDTOS).build();
+        return ResponseDTO.<NoticeDTO.responseNoticeListDto>builder().message("모든 공지사항을 조회했습니다.").data(noticeDTOS).build();
     }
 
     public ResponseDTO<NoticeDTO.responseNoticeDTO> readOne(Long id) {
@@ -217,7 +221,7 @@ public class NoticeService {
     }
 
     @Transactional
-    public ResponseDTO<NoticeDTO.responseNoticeDTO> delete(Long id) {
+    public ResponseDTO<NoticeDTO.responseNoticeListDto> delete(Long id) {
 
         noticeRepository.deleteById(id);
 
