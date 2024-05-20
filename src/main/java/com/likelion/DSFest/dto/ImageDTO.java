@@ -19,6 +19,7 @@ public class ImageDTO {
         private String imageUrl;
     }
 
+
     public static responseImageDTO toDto(final Image image) {
         return responseImageDTO.builder()
                 .id(image.getId())

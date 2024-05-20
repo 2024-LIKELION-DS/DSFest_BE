@@ -38,6 +38,18 @@ public class NoticeDTO {
         private List<ImageDTO.responseImageDTO> images;
     }
 
+    @Builder
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class responseNoticeListDto {
+        private Long id;
+        private String title;
+        private String content;
+        private Category category;
+        private ImageDTO.responseImageDTO thumbnail;
+    }
+
 
 
     public static Notice toEntity(final NoticeDTO.requestNoticeDTO noticeDTO, final Category category) {
@@ -49,6 +61,16 @@ public class NoticeDTO {
     }
     public static NoticeDTO.responseNoticeDTO toDto(final Notice notice) {
         return responseNoticeDTO.builder()
+                .id(notice.getId())
+                .title(notice.getTitle())
+                .content(notice.getContent())
+                .category(notice.getCategory())
+                // .images(null)
+                .build();
+    }
+
+    public static NoticeDTO.responseNoticeListDto toListDto(final Notice notice) {
+        return responseNoticeListDto.builder()
                 .id(notice.getId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
